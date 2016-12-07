@@ -1,0 +1,101 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace JRapp
+{
+    public static partial class Numeric
+    {
+<#
+    foreach (string type in new[] { "byte", "sbyte", "decimal", "double", "float", "int", "uint", "long", "ulong", "short", "ushort" })
+    {
+#>
+        public static void MinMax(out <#= type #> min, out <#= type #> max, params <#= type #>[] values)
+        {
+            min = Min(values);
+            max = Max(values);
+        }
+
+        public static <#= type #> Clamp(<#= type #> value, <#= type #> bound1, <#= type #> bound2)
+        {
+            var lowLimit = bound1 < bound2 ? bound1 : bound2;
+            var hightLimit = bound1 > bound2 ? bound1 : bound2;
+
+            if (value < lowLimit)
+                value = lowLimit;
+            if (value > hightLimit)
+                value = hightLimit;
+
+            return value;
+        }
+
+        public static <#= type #> Max(params <#= type #>[] values)
+        {
+            <#= type #> max = values[0];
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] > max)
+                    max = values[i];
+            }
+
+            return max;
+        }
+
+        public static bool UpdateToMax(ref <#= type #> update, params <#= type #>[] values)
+        {
+            bool changed = false;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] > update)
+                {
+                    changed = true;
+                    update = values[i];
+                }
+            }
+
+            return changed;
+        }
+
+        public static bool UpdateToMin(ref <#= type #> update, params <#= type #>[] values)
+        {
+            bool changed = false;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] < update)
+                {
+                    changed = true;
+                    update = values[i];
+                }
+            }
+
+            return changed;
+        }
+
+        public static <#= type #> Min(params <#= type #>[] values)
+        {
+            <#= type #> min = values[0];
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] < min)
+                    min = values[i];
+            }
+
+            return min;
+        }
+
+
+<#
+    }
+#>
+    }
+}
